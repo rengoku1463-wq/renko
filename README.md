@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRide Helmet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-icons i {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Screen Styles */
+        .screen {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Login Screen */
+        .login-container {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .login-logo {
+            font-size: 60px;
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+
+        .login-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #1a73e8;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .phone-login {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .google-login {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .otp-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        /* Home Screen */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .status-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .control-panel {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .control-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .control-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .control-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #1a73e8;
+        }
+
+        .map-container {
+            height: 200px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .ride-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #1a73e8;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #ddd;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        /* Settings Screen */
+        .settings-list {
+            list-style: none;
+        }
+
+        .settings-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .settings-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #1a73e8;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Emergency Screen */
+        .sos-button {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #f44336;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 20px rgba(244, 67, 54, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+            }
+        }
+
+        .emergency-contacts {
+            margin-top: 30px;
+        }
+
+        .contact-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .contact-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1a73e8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Ride History */
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-date {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .history-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+
+        /* Alerts */
+        .alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-helmet-safety logo-icon"></i>
+                <span class="logo-text">SmartRide</span>
+            </div>
+            <div class="header-icons">
+                <i class="fas fa-bell" id="notifications-icon"></i>
+                <i class="fas fa-user" id="profile-icon"></i>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div class="screen active" id="login-screen">
+            <div class="login-container">
+                <i class="fas fa-helmet-safety login-logo"></i>
+                <h1 class="login-title">SmartRide Helmet</h1>
+                
+                <div class="login-options">
+                    <button class="login-btn phone-login" id="phone-login-btn">
+                        <i class="fas fa-phone"></i> Login with Phone
+                    </button>
+                    <button class="login-btn google-login" id="google-login-btn">
+                        <i class="fab fa-google"></i> Login with Google
+                    </button>
+                </div>
+                
+                <div class="otp-container" id="otp-container">
+                    <input type="text" class="otp-input" placeholder="Enter OTP" id="otp-input">
+                    <button class="login-btn phone-login" id="verify-otp-btn">Verify OTP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div class="screen" id="home-screen">
+            <div class="status-bar">
+                <div class="status-item">
+                    <i class="fas fa-battery-three-quarters"></i>
+                    <span class="status-value">85%</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-bluetooth-b"></i>
+                    <span class="status-value">Connected</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-thermometer-half"></i>
+                    <span class="status-value">24°C</span>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <h3 class="control-title">Ride Controls</h3>
+                <div class="control-buttons">
+                    <div class="control-btn" id="start-ride-btn">
+                        <i class="fas fa-play-circle control-icon"></i>
+                        <span>Start Ride</span>
+                    </div>
+                    <div class="control-btn">
+                        <i class="fas fa-map-marked-alt control-icon"></i>
+                        <span>Navigation</span>
+                    </div>
+                    <div class="control-btn">
+                        <i class="fas fa-phone-alt control-icon"></i>
+                        <span>Calls</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <i class="fas fa-map-marked-alt" style="font-size: 40px; margin-right: 10px;"></i>
+                <span>Live Map View</span>
+            </div>
+
+            <div class="ride-info">
+                <div class="info-card">
+                    <i class="fas fa-route"></i>
+                    <div class="info-value">0 km</div>
+                    <div>Distance</div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="info-value">0:00</div>
+                    <div>Time</div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <div class="info-value">0 km/h</div>
+                    <div>Speed</div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-heartbeat"></i>
+                    <div class="info-value">--</div>
+                    <div>Drowsiness</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div class="screen" id="settings-screen">
+            <h2 style="margin-bottom: 20px;">Settings</h2>
+            
+            <ul class="settings-list">
+                <li class="settings-item">
+                    <span>User Profile</span>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+                <li class="settings-item">
+                    <span>Helmet Pairing</span>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+                <li class="settings-item">
+                    <span>Notifications</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </li>
+                <li class="settings-item">
+                    <span>Privacy Settings</span>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+                <li class="settings-item">
+                    <span>Emergency Contacts</span>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+                <li class="settings-item">
+                    <span>Speed Alerts</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Emergency Screen -->
+        <div class="screen" id="emergency-screen">
+            <h2 style="text-align: center; margin-bottom: 20px;">Emergency</h2>
+            
+            <div class="sos-button" id="sos-button">
+                SOS
+            </div>
+            
+            <div class="emergency-contacts">
+                <h3>Emergency Contacts</h3>
+                <ul class="contact-list">
+                    <li class="contact-item">
+                        <div class="contact-avatar">JD</div>
+                        <div>
+                            <div>John Doe</div>
+                            <div style="font-size: 12px; color: #666;">+1 234 567 890</div>
+                        </div>
+                    </li>
+                    <li class="contact-item">
+                        <div class="contact-avatar">JS</div>
+                        <div>
+                            <div>Jane Smith</div>
+                            <div style="font-size: 12px; color: #666;">+1 234 567 891</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Ride History Screen -->
+        <div class="screen" id="history-screen">
+            <h2 style="margin-bottom: 20px;">Ride History</h2>
+            
+            <ul class="history-list">
+                <li class="history-item">
+                    <div>
+                        <div class="history-date">Today, 10:30 AM</div>
+                        <div>City Center Ride</div>
+                    </div>
+                    <div class="history-stats">
+                        <div class="stat">
+                            <div class="stat-value">15.2 km</div>
+                            <div>Distance</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">45 min</div>
+                            <div>Time</div>
+                        </div>
+                    </div>
+                </li>
+                <li class="history-item">
+                    <div>
+                        <div class="history-date">Yesterday, 5:15 PM</div>
+                        <div>Evening Commute</div>
+                    </div>
+                    <div class="history-stats">
+                        <div class="stat">
+                            <div class="stat-value">12.8 km</div>
+                            <div>Distance</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">38 min</div>
+                            <div>Time</div>
+                        </div>
+                    </div>
+                </li>
+                <li class="history-item">
+                    <div>
+                        <div class="history-date">Oct 12, 2023</div>
+                        <div>Weekend Adventure</div>
+                    </div>
+                    <div class="history-stats">
+                        <div class="stat">
+                            <div class="stat-value">42.5 km</div>
+                            <div>Distance</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2h 15min</div>
+                            <div>Time</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-item active" data-screen="home-screen">
+                <i class="fas fa-home nav-icon"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" data-screen="history-screen">
+                <i class="fas fa-history nav-icon"></i>
+                <span>History</span>
+            </div>
+            <div class="nav-item" data-screen="emergency-screen">
+                <i class="fas fa-exclamation-triangle nav-icon"></i>
+                <span>Emergency</span>
+            </div>
+            <div class="nav-item" data-screen="settings-screen">
+                <i class="fas fa-cog nav-icon"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="alert alert-success" id="success-alert">Operation completed successfully!</div>
+        <div class="alert alert-error" id="error-alert">An error occurred. Please try again.</div>
+        <div class="alert alert-warning" id="warning-alert">Warning: Speed limit exceeded!</div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const screens = document.querySelectorAll('.screen');
+        const navItems = document.querySelectorAll('.nav-item');
+        const phoneLoginBtn = document.getElementById('phone-login-btn');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const otpContainer = document.getElementById('otp-container');
+        const verifyOtpBtn = document.getElementById('verify-otp-btn');
+        const startRideBtn = document.getElementById('start-ride-btn');
+        const sosButton = document.getElementById('sos-button');
+        const successAlert = document.getElementById('success-alert');
+        const errorAlert = document.getElementById('error-alert');
+        const warningAlert = document.getElementById('warning-alert');
+
+        // Navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all nav items and screens
+                navItems.forEach(nav => nav.classList.remove('active'));
+                screens.forEach(screen => screen.classList.remove('active'));
+                
+                // Add active class to clicked nav item and corresponding screen
+                item.classList.add('active');
+                const screenId = item.getAttribute('data-screen');
+                document.getElementById(screenId).classList.add('active');
+            });
+        });
+
+        // Login functionality
+        phoneLoginBtn.addEventListener('click', () => {
+            otpContainer.style.display = 'block';
+            showAlert(successAlert, 'OTP sent to your phone number');
+        });
+
+        googleLoginBtn.addEventListener('click', () => {
+            showAlert(successAlert, 'Redirecting to Google authentication...');
+            // Simulate login success after 2 seconds
+            setTimeout(() => {
+                document.getElementById('login-screen').classList.remove('active');
+                document.getElementById('home-screen').classList.add('active');
+            }, 2000);
+        });
+
+        verifyOtpBtn.addEventListener('click', () => {
+            const otpInput = document.getElementById('otp-input');
+            if (otpInput.value === '1234') { // Simulated OTP
+                showAlert(successAlert, 'Login successful!');
+                // Switch to home screen after successful login
+                setTimeout(() => {
+                    document.getElementById('login-screen').classList.remove('active');
+                    document.getElementById('home-screen').classList.add('active');
+                }, 1000);
+            } else {
+                showAlert(errorAlert, 'Invalid OTP. Please try again.');
+            }
+        });
+
+        // Start ride functionality
+        let rideActive = false;
+        let rideStartTime;
+        let rideInterval;
+        let distance = 0;
+        let speed = 0;
+
+        startRideBtn.addEventListener('click', () => {
+            if (!rideActive) {
+                rideActive = true;
+                startRideBtn.innerHTML = '<i class="fas fa-stop-circle control-icon"></i><span>Stop Ride</span>';
+                rideStartTime = new Date();
+                
+                // Simulate ride data updates
+                rideInterval = setInterval(() => {
+                    // Update distance (random increment)
+                    distance += Math.random() * 0.2;
+                    document.querySelector('.ride-info .info-card:nth-child(1) .info-value').textContent = distance.toFixed(1) + ' km';
+                    
+                    // Update time
+                    const currentTime = new Date();
+                    const rideTime = new Date(currentTime - rideStartTime);
+                    const minutes = rideTime.getMinutes().toString().padStart(2, '0');
+                    const seconds = rideTime.getSeconds().toString().padStart(2, '0');
+                    document.querySelector('.ride-info .info-card:nth-child(2) .info-value').textContent = `${minutes}:${seconds}`;
+                    
+                    // Update speed (random value between 15-35 km/h)
+                    speed = 15 + Math.random() * 20;
+                    document.querySelector('.ride-info .info-card:nth-child(3) .info-value').textContent = speed.toFixed(0) + ' km/h';
+                    
+                    // Simulate drowsiness detection
+                    const drowsinessLevel = Math.random() * 100;
+                    let drowsinessText = 'Normal';
+                    if (drowsinessLevel > 80) {
+                        drowsinessText = 'High';
+                        showAlert(warningAlert, 'Drowsiness detected! Stay alert!');
+                    } else if (drowsinessLevel > 60) {
+                        drowsinessText = 'Medium';
+                    }
+                    document.querySelector('.ride-info .info-card:nth-child(4) .info-value').textContent = drowsinessText;
+                    
+                    // Speed limit warning
+                    if (speed > 30) {
+                        showAlert(warningAlert, 'Warning: Speed limit exceeded!');
+                    }
+                }, 1000);
+            } else {
+                rideActive = false;
+                startRideBtn.innerHTML = '<i class="fas fa-play-circle control-icon"></i><span>Start Ride</span>';
+                clearInterval(rideInterval);
+                showAlert(successAlert, 'Ride completed! Data saved to history.');
+            }
+        });
+
+        // SOS Button functionality
+        sosButton.addEventListener('click', () => {
+            showAlert(errorAlert, 'SOS Alert sent to emergency contacts!');
+            // In a real app, this would send actual emergency notifications
+        });
+
+        // Alert function
+        function showAlert(alertElement, message) {
+            alertElement.textContent = message;
+            alertElement.style.display = 'block';
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Simulate initial connection status
+        setTimeout(() => {
+            showAlert(successAlert, 'Helmet connected successfully!');
+        }, 500);
+    </script>
+</body>
+</html>
